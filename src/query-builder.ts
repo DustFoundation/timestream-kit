@@ -8,6 +8,11 @@ class _QueryBuilder {
     return this;
   }
 
+  public as(field: string | string[]): _QueryBuilder {
+    this.concatQuery(`AS ${Array.isArray(field) ? field.join(',') : field}`);
+    return this;
+  }
+
   public where(field: string): _QueryBuilder {
     this.concatQuery(`WHERE ${field}`);
     return this;
@@ -18,12 +23,57 @@ class _QueryBuilder {
     return this;
   }
 
+  public or(field: string): _QueryBuilder {
+    this.concatQuery(`OR ${field}`);
+    return this;
+  }
+
+  public not(field: string): _QueryBuilder {
+    this.concatQuery(`NOT ${field}`);
+    return this;
+  }
+
+  public groupBy(field: string | string[]): _QueryBuilder {
+    this.concatQuery(`GROUP BY ${Array.isArray(field) ? field.join(',') : field}`);
+    return this;
+  }
+
   public orderBy(field: string, type: 'ASC' | 'DESC'): _QueryBuilder {
     this.concatQuery(`ORDER BY ${field} ${type}`);
     return this;
   }
 
   // FILTERS
+
+  public equal(value: string | number | Date): _QueryBuilder {
+    this.concatQuery(`= ${this.transformValue(value)}`);
+    return this;
+  }
+
+  public notEqual(value: string | number | Date): _QueryBuilder {
+    this.concatQuery(`!= ${this.transformValue(value)}`);
+    return this;
+  }
+
+  public lessThan(value: string | number | Date): _QueryBuilder {
+    this.concatQuery(`< ${this.transformValue(value)}`);
+    return this;
+  }
+
+  public greaterThan(value: string | number | Date): _QueryBuilder {
+    this.concatQuery(`> ${this.transformValue(value)}`);
+    return this;
+  }
+
+  public lessThanOrEqual(value: string | number | Date): _QueryBuilder {
+    this.concatQuery(`<= ${this.transformValue(value)}`);
+    return this;
+  }
+
+  public greaterThanOrEqual(value: string | number | Date): _QueryBuilder {
+    this.concatQuery(`>= ${this.transformValue(value)}`);
+    return this;
+  }
 
   public from(database: string, table: string): _QueryBuilder {
     this.concatQuery(`FROM "${database}"."${table}"`);
@@ -62,6 +112,8 @@ class _QueryBuilder {
   }
 }
 
-export function QueryBuilder(): _QueryBuilder {
+export function QueryBuilder(): QueryBuilderType {
   return new _QueryBuilder();
 }
+
+export interface QueryBuilderType extends _QueryBuilder {}
