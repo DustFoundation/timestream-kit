@@ -4,6 +4,16 @@ import { QueryBuilder } from './query-builder';
 describe('QueryBuilder', () => {
   // FIELDS
 
+  it('raw(string)', () => {
+    const query = QueryBuilder().select('id').raw('FROM "test"').build();
+    expect(query).to.equal('SELECT id FROM "test" ');
+  });
+
+  it('fromTable(database, table)', () => {
+    const query = QueryBuilder().fromTable('database', 'table').build();
+    expect(query).eql('FROM "database"."table" ');
+  });
+
   it('select(string)', () => {
     const query = QueryBuilder().select('id').build();
     expect(query).eql('SELECT id ');
@@ -11,6 +21,15 @@ describe('QueryBuilder', () => {
   it('select(string[])', () => {
     const query = QueryBuilder().select(['id', 'name']).build();
     expect(query).eql('SELECT id,name ');
+  });
+
+  it('selectDistinct(string)', () => {
+    const query = QueryBuilder().selectDistinct('id').build();
+    expect(query).eql('SELECT DISTINCT id ');
+  });
+  it('selectDistinct(string[])', () => {
+    const query = QueryBuilder().selectDistinct(['id', 'name']).build();
+    expect(query).eql('SELECT DISTINCT id,name ');
   });
 
   it('as(string)', () => {
@@ -40,6 +59,11 @@ describe('QueryBuilder', () => {
   it('not(string)', () => {
     const query = QueryBuilder().not('id').build();
     expect(query).eql('NOT id ');
+  });
+
+  it('on(string)', () => {
+    const query = QueryBuilder().on('id').build();
+    expect(query).eql('ON id ');
   });
 
   it('groupBy(string)', () => {
@@ -140,11 +164,6 @@ describe('QueryBuilder', () => {
     expect(query).eql(">= '2022-01-01 00:00:00.000' ");
   });
 
-  it('from(database, table)', () => {
-    const query = QueryBuilder().from('database', 'table').build();
-    expect(query).eql('FROM "database"."table" ');
-  });
-
   it('in(string[])', () => {
     const query = QueryBuilder().in(['value1', 'value2']).build();
     expect(query).eql("IN ('value1','value2') ");
@@ -170,15 +189,18 @@ describe('QueryBuilder', () => {
   it('build() with queries', () => {
     const query = QueryBuilder()
       .select('*')
-      .from('databaseName', 'tableName')
+      .fromTable('databaseName', 'tableName')
       .where('id')
       .in([1, 2])
       .and('time')
       .between(new Date('2022-01-01'), new Date('2022-01-02'))
+      .and('quantity')
+      .greaterThanOrEqual(1)
+      .groupBy('id')
       .orderBy('time', 'DESC')
       .build();
     expect(query).eql(
-      `SELECT * FROM "databaseName"."tableName" WHERE id IN (1,2) AND time BETWEEN '2022-01-01 00:00:00.000' AND '2022-01-02 00:00:00.000' ORDER BY time DESC `,
+      `SELECT * FROM "databaseName"."tableName" WHERE id IN (1,2) AND time BETWEEN '2022-01-01 00:00:00.000' AND '2022-01-02 00:00:00.000' AND quantity >= 1 GROUP BY id ORDER BY time DESC `,
     );
   });
 

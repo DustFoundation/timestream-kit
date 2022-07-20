@@ -19,16 +19,21 @@ npm install --save @dustfoundation/timestream-kit
 ```ts
 QueryBuilder()
   .select('*')
-  .from('databaseName', 'tableName')
+  .fromTable('databaseName', 'tableName')
   .where('id')
   .in([1, 2])
   .and('time')
   .between(new Date('2022-01-01'), new Date('2022-01-02'))
+  .and('quantity')
+  .greaterThanOrEqual(1)
+  .groupBy('id')
   .orderBy('time', 'DESC')
   .build();
 // =>
 // SELECT * FROM "databaseName"."tableName"
 // WHERE id IN (1,2)
 // AND time BETWEEN '2022-01-01 00:00:00.000' AND '2022-01-02 00:00:00.000'
+// AND quantity >= 1
+// GROUP BY id
 // ORDER BY time DESC
 ```

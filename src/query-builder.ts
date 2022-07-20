@@ -3,8 +3,23 @@ class _QueryBuilder {
 
   // FIELDS
 
+  public raw(value: string): _QueryBuilder {
+    this.concatQuery(value);
+    return this;
+  }
+
+  public fromTable(database: string, table: string): _QueryBuilder {
+    this.concatQuery(`FROM "${database}"."${table}"`);
+    return this;
+  }
+
   public select(field: string | string[]): _QueryBuilder {
     this.concatQuery(`SELECT ${Array.isArray(field) ? field.join(',') : field}`);
+    return this;
+  }
+
+  public selectDistinct(field: string | string[]): _QueryBuilder {
+    this.concatQuery(`SELECT DISTINCT ${Array.isArray(field) ? field.join(',') : field}`);
     return this;
   }
 
@@ -30,6 +45,11 @@ class _QueryBuilder {
 
   public not(field: string): _QueryBuilder {
     this.concatQuery(`NOT ${field}`);
+    return this;
+  }
+
+  public on(field: string): _QueryBuilder {
+    this.concatQuery(`ON ${field}`);
     return this;
   }
 
@@ -72,11 +92,6 @@ class _QueryBuilder {
 
   public greaterThanOrEqual(value: string | number | Date): _QueryBuilder {
     this.concatQuery(`>= ${this.transformValue(value)}`);
-    return this;
-  }
-
-  public from(database: string, table: string): _QueryBuilder {
-    this.concatQuery(`FROM "${database}"."${table}"`);
     return this;
   }
 
