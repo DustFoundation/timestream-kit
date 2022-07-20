@@ -1,6 +1,6 @@
 {
   "name": "@dustfoundation/timestream-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Timestream Kit for fast development",
   "repository": "https://github.com/DustFoundation/timestream-kit",
   "main": "dist/index.js",
